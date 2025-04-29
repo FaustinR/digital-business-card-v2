@@ -159,7 +159,12 @@ document.getElementById("download-qr-code").addEventListener("click", async () =
   });
 
   
-
+  
+/**
+ * Cette fonction permet d'ajouter un suat de ligne lors de l'affichage du rôle dans la carte
+  * @param {id} - l'identifiant du champ input du formulaire 
+  * @returns rien
+*/
 function customizeDisplayRole(id) {
     const role = document.getElementById(id);
     if (role) {
