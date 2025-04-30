@@ -168,7 +168,7 @@ document.getElementById("download-qr-code").addEventListener("click", async () =
       "FN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" + qpEncodeStr(`${data['first-name']} ${data['last-name']}`),
       "ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" + qpEncodeStr(data.company),
       "TITLE;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" + qpEncodeStr(data.role),
-      "TEL;TYPE=CELL,VOICE:" + qpEncodeStr(data.phone),
+      "TEL;TYPE=CELL,VOICE:" + data.phone.replace(/\s+/g, ''),
       "EMAIL:" + qpEncodeStr(data.email),
       "URL:" + qpEncodeStr(website),
       "URL:" + qpEncodeStr(linkedin),
@@ -188,10 +188,6 @@ document.getElementById("download-qr-code").addEventListener("click", async () =
       type: "text/x-vcard;charset=utf-8"
     });
     
-    console.log(sanitizeInput(data.street));
-    console.log(qpEncodeStr(data.street));
-    console.log(qpEncodeStr(sanitizeInput(data.street)));
-
     html2canvas(document.getElementById("summary-infos"), {
       useCORS: true,
       scale: 2
