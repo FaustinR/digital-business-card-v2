@@ -300,7 +300,7 @@ function displayQrCode(){
   * @returns rien
 */
 
-function customizeJobTitle(maxLength = 20) {
+function customizeJobTitle(maxLength = 21) {
   const text = document.getElementById('role').value;
   const breakChars = /[ ,&./\\]/;
   let result = '';
@@ -331,9 +331,30 @@ function customizeJobTitle(maxLength = 20) {
 }
 
 
+function formatAddress() {
+  const addressField = document.getElementById("display-adress");
+  let address = addressField.innerHTML;
+
+  // Normalize line breaks for processing
+  let lines = address.split(/<br\s*\/?>/gi).map(line => line.trim());
+  if (window.innerWidth <= 480) {
+    // Small screen: add line break before Cedex if found
+    lines = lines.map(line => {
+      return line.includes("Cedex") ? line.replace(/(.*)(\sCedex\s?\d*)/, "$1<br>$2") : line;
+    });
+  } else {
+    // Larger screen: keep original structure without added <br> before Cedex
+    lines = lines.map(line => line.replace(/<br\s*\/?>/gi, '').trim());
+  }
+  // Rebuild the address string
+  addressField.innerHTML = lines.join("<br>");
+}
+
+document.getElementById("address").addEventListener("change", formatAddress);
+
 window.onload = ()=>{
   updateSummaryAndQRCode();
-
+  formatAddress()
   const phoneInput = document.getElementById('phone');
   const prefix = '+33';
 
@@ -368,4 +389,8 @@ window.onload = ()=>{
       phoneInput.setSelectionRange(prefix.length, prefix.length);
     }
   });
+
+  window.addEventListener("DOMContentLoaded", formatAddress);
+  window.addEventListener("resize", formatAddress);
+
 }
