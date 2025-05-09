@@ -10,7 +10,6 @@ const firstName = document.getElementById('first-name').value.trim();
 const lastName = document.getElementById('last-name').value.trim();
 const inputs = ['first-name', 'last-name','role', 'phone', 'email', 'address', 'country'];
 
-
 /**
  * Liste des adresses des sites de Bezons, Aix et Echirolles 
  * Utilisation des \n permet d'avoir des sauts de ligne lors de l'affichage dans la carte de visite
@@ -112,7 +111,7 @@ function getFormData() {
   
     inputs.forEach(id => {
       if(['first-name', 'last-name'].includes(id)){
-        document.getElementById('display-names').textContent = firstName || lastName ? `${firstName} ${lastName}` : ''
+        document.getElementById('display-names').textContent = firstName || lastName ? `${firstName.replace(/[0-9]/g, '')} ${lastName.replace(/[0-9]/g, '')}` : ''
       }else if(id === 'address'){
         document.getElementById('display-adress').innerHTML = addressToDisplay;
       }else if(id === 'phone'){
@@ -152,6 +151,10 @@ function getFormData() {
   `END:VCARD`;
 
     formatAddress();
+
+    const stringInputs = [document.getElementById("first-name"), document.getElementById("last-name")];
+    stringInputs.forEach(allowOnlyLetters);
+  
     generateQRCode(vcard);
   }
 
@@ -315,11 +318,18 @@ function getAddress(){
   
 function displayQrCode(){
     emptyField = checkEmptyFields();
+    const emailInput = document.getElementById("email");
     const notifClass = emptyField !== '' ? 'error' : 'success';
     let message;
     if(emptyField !== ''){
         message = `${emptyField} must be provided`;
         notify(emptyField, notifClass, message);
+    }else if(!isValidEmail(emailInput.value)){
+      const errorSpan = document.getElementById("email-error");
+      errorSpan.style.display = "inline";
+      setTimeout(function() {
+        errorSpan.style.display = "none";
+      }, 5000);
     }else{
         let name = document.getElementById('first-name').value.trim()
 
@@ -387,15 +397,50 @@ function formatAddress() {
   addressField.innerHTML = lines.join("<br>");
 }
 
+function allowOnlyLetters(input) {
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/[^a-zA-Z\s]/g, ""); // On enlève tous les chiffres qu'il y a dans les inputs (Nom et prénom)
+  });
+}
+
+
+function isValidEmail(email) {
+  const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return pattern.test(email);
+}
+
+
 window.onload = ()=>{
   updateSummaryAndQRCode();
   formatAddress();
+
+  const emailInput = document.getElementById("email");
+  const errorSpan = document.getElementById("email-error");
+
+  emailInput.addEventListener("blur", function () {
+    if (!isValidEmail(emailInput.value)) {
+      errorSpan.style.display = "inline";
+    } else {
+      errorSpan.style.display = "none";
+    }
+
+    setTimeout(function() {
+      errorSpan.style.display = "none";
+  }, 5000);
+
+  });
+
+
   const phoneInput = document.getElementById('phone');
   const prefix = '+33';
 
   phoneInput.addEventListener('input', () => {
     if (!phoneInput.value.startsWith(prefix)) {
       phoneInput.value = prefix;
+    }else {
+      // Garder le préfix et supprimer tous ce qui n'est pas un chiffre après le préfix
+      const numberPart = phoneInput.value.slice(prefix.length).replace(/\D/g, "");
+      phoneInput.value = prefix + numberPart;
     }
   });
 
