@@ -303,3 +303,11 @@
   flex-direction: column;
   width: 100%;
 }
+
+#custom-address {
+  display: none;
+}
+
+#custom-street, #custom-code, #custom-city{
+  height: fit-content;
+}
