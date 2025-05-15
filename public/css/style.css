@@ -308,6 +308,10 @@
   display: none;
 }
 
-#custom-street, #custom-code, #custom-city{
+#custom-street, #custom-code, #custom-city, #additional-street{
   height: fit-content;
+}
+
+#other-country {
+  display: none;
 }
